@@ -1,0 +1,49 @@
+﻿<Window x:Class="WarehouseEquipmentManager.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Title="Авторизация" Height="400" Width="400">
+    <Border BorderBrush="#FF3C2C62" BorderThickness="1" CornerRadius="5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title Bar -->
+            <DockPanel LastChildFill="False" VerticalAlignment="Top" Background="#FF3C2C62" 
+                       MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
+                <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
+                       FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
+                <Label Content="Авторизация" Foreground="#FFD9D8D8" 
+                       FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </DockPanel>
+
+            <!-- Login Form -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
+                <Label Content="Логин:" Margin="0,5"/>
+                <TextBox x:Name="txtLogin" Height="25" Margin="0,0,0,10"/>
+
+                <Label Content="Пароль:" Margin="0,5"/>
+                <PasswordBox x:Name="txtPassword" Height="25" Margin="0,0,0,10"/>
+
+                <Label Content="ФИО:" Margin="0,5"/>
+                <TextBox x:Name="txtFullName" Height="25" Margin="0,0,0,10"/>
+
+                <Label Content="Должность:" Margin="0,5"/>
+                <ComboBox x:Name="cmbPosition" Height="25" Margin="0,0,0,20">
+                    <ComboBoxItem Content="Администратор"/>
+                    <ComboBoxItem Content="Кладовщик"/>
+                    <ComboBoxItem Content="Гость"/>
+                </ComboBox>
+
+                <Button Content="Войти" Height="30" Click="LoginButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

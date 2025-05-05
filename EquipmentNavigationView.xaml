@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="WarehouseEquipmentManager.EquipmentNavigationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WarehouseEquipmentManager"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="300">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10">
+            <!-- Поиск по названию -->
+            <GroupBox Header="Название">
+                <TextBox Margin="5"/>
+            </GroupBox>
+
+            <!-- Поиск по серийному номеру -->
+            <GroupBox Header="Серийный номер">
+                <TextBox Margin="5"/>
+            </GroupBox>
+
+            <!-- Фильтр по типу -->
+            <GroupBox Header="Тип оборудования">
+                <ComboBox Margin="5" IsSynchronizedWithCurrentItem="True"/>
+            </GroupBox>
+
+            <!-- Фильтр по статусу -->
+            <GroupBox Header="Статус">
+                <ComboBox Margin="5"/>
+            </GroupBox>
+
+            <!-- Фильтр по дате -->
+            <GroupBox Header="Дата поступления">
+                <DatePicker Margin="5"/>
+            </GroupBox>
+
+            <!-- Фильтр по складу -->
+            <GroupBox Header="Склад">
+                <ComboBox Margin="5"/>
+            </GroupBox>
+
+            <!-- Кнопки -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Сброс" Margin="5" Width="80"/>
+                <Button Content="Поиск" Margin="5" Width="80"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
