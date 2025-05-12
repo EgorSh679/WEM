@@ -17,7 +17,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Title Bar -->
             <DockPanel LastChildFill="False" VerticalAlignment="Top" Background="#FF3C2C62" 
                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
                 <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
@@ -28,7 +27,6 @@
                        FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </DockPanel>
 
-            <!-- Menu Bar -->
             <Menu Grid.Row="1" Background="#FFE6E6E6">
                 <MenuItem Header="Добавить оборудование" Click="AddNewEquipment_Click"/>
                 <MenuItem Header="Удалить оборудование" Click="DeleteEquipment_Click"/>
@@ -36,7 +34,6 @@
                 <MenuItem Header="О программе" Click="About_Click"/>
             </Menu>
 
-            <!-- Main Content -->
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
@@ -44,7 +41,6 @@
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Block 1 - Navigation -->
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -60,7 +56,6 @@
                     <ContentControl x:Name="contentControl" Grid.Row="1"/>
                 </Grid>
 
-                <!-- Block 2 - Search Results -->
                 <Grid Grid.Column="1" Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -73,7 +68,6 @@
                     </ScrollViewer>
                 </Grid>
 
-                <!-- Block 3 - Details -->
                 <ContentControl x:Name="contentControl2" Grid.Column="2" Margin="5"/>
             </Grid>
         </Grid>

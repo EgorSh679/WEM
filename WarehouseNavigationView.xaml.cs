@@ -30,12 +30,10 @@ namespace WarehouseEquipmentManager
 
         private void LoadWarehouses()
         {
-            // Очистка панели перед загрузкой новых данных
             WarehousesPanel.Children.Clear();
 
             using (var context = new WarehouseDBEntities())
             {
-                // Загрузка складов из базы данных
                 var warehouses = context.Warehouses
                     .OrderBy(w => w.Name)
                     .Select(w => new Warehouse
@@ -47,7 +45,6 @@ namespace WarehouseEquipmentManager
                     })
                     .ToList();
 
-                // Создание блоков для каждого склада
                 foreach (var warehouse in warehouses)
                 {
                     var border = new Border
@@ -57,7 +54,7 @@ namespace WarehouseEquipmentManager
                         Margin = new Thickness(0, 0, 0, 10),
                         Padding = new Thickness(10),
                         Background = Brushes.White,
-                        Cursor = Cursors.Hand // Добавляем курсор-указатель
+                        Cursor = Cursors.Hand
                     };
 
                     var textBlock = new TextBlock
@@ -81,7 +78,7 @@ namespace WarehouseEquipmentManager
             }
         }
 
-        // Дополнительный метод для показа деталей склада
+        // доп метод для показа деталей склада
         /*private void ShowWarehouseDetails(int warehouseId)
         {
             using (var context = new WarehouseDBEntities())
@@ -91,7 +88,6 @@ namespace WarehouseEquipmentManager
 
                 if (warehouse != null)
                 {
-                    // Здесь можно открыть детали склада в другом контроле
                     MessageBox.Show($"Детали склада:\n\n" +
                                   $"ID: {warehouse.Id}\n" +
                                   $"Название: {warehouse.Name}\n" +

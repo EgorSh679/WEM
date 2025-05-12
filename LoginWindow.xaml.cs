@@ -34,7 +34,6 @@ namespace WarehouseEquipmentManager
             string password = txtPassword.Password;
             //string fullName = txtFullName.Text.Trim();
 
-            // Проверка заполнения полей
             if (string.IsNullOrEmpty(login))
             {
                 MessageBox.Show("Введите логин");
@@ -55,12 +54,10 @@ namespace WarehouseEquipmentManager
 
             try
             {
-                // Хешируем введенный пароль для сравнения с базой
                 string hashedPassword = HashPassword(password);
 
                 using (var context = new WarehouseDBEntities())
                 {
-                    // Ищем пользователя с совпадающим логином, паролем и ФИО
                     var user = context.Users
                         .FirstOrDefault(u => u.Login == login &&
                                             u.PasswordHash == hashedPassword); // &&
@@ -68,10 +65,8 @@ namespace WarehouseEquipmentManager
 
                     if (user != null)
                     {
-                        // Авторизация успешна
                         var mainWindow = new MainWindow();
 
-                        // Сохраняем информацию о текущем пользователе (можно через статический класс или свойства) 
                         CurrentUser.Id = user.Id;
                         CurrentUser.Login = user.Login;
                         CurrentUser.RoleId = user.RoleId;
@@ -92,7 +87,6 @@ namespace WarehouseEquipmentManager
             }
         }
 
-        // Класс для хранения данных текущего пользователя
         public static class CurrentUser
         {
             public static int Id { get; set; }
@@ -112,14 +106,14 @@ namespace WarehouseEquipmentManager
         {
             Close();
         }
-        private string HashPassword(string password) // password принимает методом в виде аргумента
+        private string HashPassword(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 byte[] sourceBytePassw = Encoding.UTF8.GetBytes(password);
                 byte[] hashSourceBytePassw = sha256Hash.ComputeHash(sourceBytePassw);
                 string hashPassw = BitConverter.ToString(hashSourceBytePassw).Replace("-", string.Empty);
-                return hashPassw; // возвращаемое методом строковое значение
+                return hashPassw;
             }
         }
     }

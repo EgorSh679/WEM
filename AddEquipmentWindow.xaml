@@ -8,7 +8,6 @@
         WindowStyle="None" AllowsTransparency="True"
         Width="400" Height="675" >
     <Grid>
-        <!-- Кастомный заголовок -->
         <DockPanel LastChildFill="False" VerticalAlignment="Top" Background="#FF3C2C62" 
                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
             <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" 
@@ -18,11 +17,9 @@
                FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
         </DockPanel>
 
-        <!-- Основное содержимое -->
         <Border BorderBrush="#FFD3D3D3" BorderThickness="1" CornerRadius="5" Padding="10"
             Background="White" Margin="10,40,10,10">
             <StackPanel>
-                <!-- Выбор изображения -->
                 <Border BorderBrush="LightGray" BorderThickness="1" 
             Width="270" Height="180" Margin="0,0,0,10"
             HorizontalAlignment="Center">
@@ -35,7 +32,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Основные поля -->
                 <TextBlock Text="Название:" FontWeight="Bold" Margin="0,5,0,0"/>
                 <TextBox x:Name="txtName" Margin="0,0,0,5"/>
 
@@ -66,7 +62,6 @@
                 TextWrapping="Wrap" Height="60" 
                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
 
-                <!-- Кнопки действий -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Отмена" Width="80" Margin="0,0,5,0" Click="Cancel_Click"/>
                     <Button Content="Сохранить" Width="80" Background="#FF3C2C62" 

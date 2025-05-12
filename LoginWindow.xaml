@@ -15,7 +15,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Title Bar -->
             <DockPanel VerticalAlignment="Top" Background="#FF3C2C62" 
                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
                 <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
@@ -24,7 +23,6 @@
                        FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </DockPanel>
 
-            <!-- Login Form -->
             <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
                 <Label Content="Логин:" Margin="0,5"/>
                 <TextBox x:Name="txtLogin" Margin="0,0,0,10"/>

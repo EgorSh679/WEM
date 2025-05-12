@@ -33,7 +33,6 @@ namespace WarehouseEquipmentManager
 
             using (var context = new WarehouseDBEntities())
             {
-                // Загрузка пользователей с JOIN к таблице ролей
                 var users = context.Users
                     .Join(context.UserRoles,
                           user => user.RoleId,
@@ -43,7 +42,7 @@ namespace WarehouseEquipmentManager
                               Id = user.Id,
                               Login = user.Login,
                               Role = (UserRole)user.RoleId,
-                              RoleName = role.Name, // Добавляем название роли
+                              RoleName = role.Name,
                               FullName = user.FullName,
                               Email = user.Email
                           })
@@ -66,7 +65,7 @@ namespace WarehouseEquipmentManager
                     {
                         Text = $"ID: {user.Id}\n" +
                                $"Логин: {user.Login}\n" +
-                               $"Роль: {user.RoleName}\n" + // Используем RoleName из JOIN
+                               $"Роль: {user.RoleName}\n" +
                                $"Полное имя: {user.FullName}\n" +
                                $"Email: {user.Email ?? "не указан"}",
                         TextWrapping = TextWrapping.Wrap
@@ -78,27 +77,23 @@ namespace WarehouseEquipmentManager
             }
         }
 
-        // Enum для ролей пользователей
         public enum UserRole
         {
             Admin = 1,
             Storekeeper = 2,
             Viewer = 3
-            // Добавьте другие роли при необходимости
         }
 
-        // Класс User (должен быть объявлен в вашем проекте)
         public class User
         {
             public int Id { get; set; }
             public string Login { get; set; }
             public UserRole Role { get; set; }
-            public string RoleName { get; set; } // Добавлено для хранения названия роли
+            public string RoleName { get; set; }
             public string FullName { get; set; }
             public string Email { get; set; }
         }
 
-        // Метод для получения названия роли
         private string GetRoleName(UserRole role)
         {
             switch (role)

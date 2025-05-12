@@ -40,20 +40,17 @@ namespace WarehouseEquipmentManager
             cbStatus.ItemsSource = GetEquipmentStatuses();
             cbWarehouse.ItemsSource = GetWarehouses();
 
-            // Настройка отображения для всех ComboBox
             foreach (var comboBox in new[] { cbType, cbStatus, cbWarehouse })
             {
                 comboBox.DisplayMemberPath = "Name";
                 comboBox.SelectedValuePath = "Id";
             }
 
-            // Добавление пункта "Все" и выбор его по умолчанию
             AddAllItemAndSelect(cbType);
             AddAllItemAndSelect(cbStatus);
             AddAllItemAndSelect(cbWarehouse);
         }
 
-        // Методы для загрузки данных
         private List<ComboBoxItem> GetEquipmentTypes()
         {
             using (var context = new WarehouseDBEntities())
@@ -99,7 +96,6 @@ namespace WarehouseEquipmentManager
             }
         }
 
-        // Вспомогательный метод для добавления пункта "Все"
         private void AddAllItemAndSelect(ComboBox comboBox)
         {
             var items = comboBox.ItemsSource as List<ComboBoxItem>;
@@ -107,7 +103,6 @@ namespace WarehouseEquipmentManager
             comboBox.SelectedIndex = 0;
         }
 
-        // Класс для элементов ComboBox
         public class ComboBoxItem
         {
             public int Id { get; set; }
@@ -116,7 +111,6 @@ namespace WarehouseEquipmentManager
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем значения из полей
             string name = tbName.Text;
             string serial = tbSerialNumber.Text;
             int? typeId = cbType.SelectedValue as int?;
@@ -124,13 +118,11 @@ namespace WarehouseEquipmentManager
             DateTime? date = dpData.SelectedDate;
             int? warehouseId = cbWarehouse.SelectedValue as int?;
 
-            // Вызываем событие с параметрами поиска
             SearchRequested?.Invoke(name, serial, typeId, statusId, date, warehouseId);
         }
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            // Сброс всех фильтров
             tbName.Text = string.Empty;
             tbSerialNumber.Text = string.Empty;
             cbType.SelectedIndex = 0;

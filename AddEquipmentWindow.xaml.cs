@@ -58,7 +58,6 @@ namespace WarehouseEquipmentManager
             }
             else
             {
-                // Если пользователь не выбрал изображение, устанавливаем изображение по умолчанию
                 _imagePath = null;
                 imgEquipment.Source = new BitmapImage(new Uri(DefaultImagePath));
             }
@@ -76,7 +75,6 @@ namespace WarehouseEquipmentManager
             {
                 using (var context = new WarehouseDBEntities())
                 {
-                    // Создаем новое оборудование
                     var newEquipment = new Equipment
                     {
                         Name = txtName.Text,
@@ -93,30 +91,23 @@ namespace WarehouseEquipmentManager
                     context.Equipment.Add(newEquipment);
                     context.SaveChanges();
 
-                    // Обработка изображения
-                    string relativePath = "image.png"; // Значение по умолчанию
+                    string relativePath = "image.png";
 
                     if (!string.IsNullOrEmpty(_imagePath))
                     {
-                        // Получаем имя файла без пути
                         string imageFileName = System.IO.Path.GetFileName(_imagePath);
                         relativePath = imageFileName;
 
-                        // Определяем папку images (в папке приложения)
                         string imagesDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "images");
 
-                        // Создаем папку, если ее нет
                         if (!Directory.Exists(imagesDir))
                             Directory.CreateDirectory(imagesDir);
 
-                        // Полный путь для сохранения
                         string destinationPath = System.IO.Path.Combine(imagesDir, imageFileName);
 
-                        // Копируем файл с перезаписью, если существует
                         File.Copy(_imagePath, destinationPath, overwrite: true);
                     }
 
-                    // Сохраняем информацию о фото в БД
                     var photo = new EquipmentPhotos
                     {
                         EquipmentId = newEquipment.Id,
@@ -152,7 +143,6 @@ namespace WarehouseEquipmentManager
             this.Close();
         }
     }
-    // Этот класс должен быть в том же namespace, что и ваша модель Entity Framework
     public partial class EquipmentPhoto
     {
         public int Id { get; set; }

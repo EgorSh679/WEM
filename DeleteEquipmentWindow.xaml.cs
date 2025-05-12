@@ -65,7 +65,6 @@ namespace WarehouseEquipmentManager
 
         private Border CreateEquipmentCard(Equipment equipment)
         {
-            // Создаем карточку оборудования
             var card = new Border
             {
                 BorderBrush = Brushes.LightGray,
@@ -74,12 +73,11 @@ namespace WarehouseEquipmentManager
                 Margin = new Thickness(0, 0, 0, 10),
                 Background = Brushes.White,
                 Padding = new Thickness(10),
-                Tag = equipment.Id // Сохраняем ID оборудования в Tag
+                Tag = equipment.Id
             };
 
             var stack = new StackPanel();
 
-            // ID оборудования
             var idText = new TextBlock
             {
                 Text = $"ID: {equipment.Id}",
@@ -87,7 +85,6 @@ namespace WarehouseEquipmentManager
                 Margin = new Thickness(0, 0, 0, 5)
             };
 
-            // Название оборудования
             var nameText = new TextBlock
             {
                 Text = equipment.Name,
@@ -95,7 +92,6 @@ namespace WarehouseEquipmentManager
                 Margin = new Thickness(0, 0, 0, 5)
             };
 
-            // Серийный номер
             var serialText = new TextBlock
             {
                 Text = $"Серийный номер: {equipment.SerialNumber ?? "не указан"}",
@@ -109,7 +105,6 @@ namespace WarehouseEquipmentManager
 
             card.Child = stack;
 
-            // Обработчик клика по карточке
             card.MouseLeftButtonDown += (sender, e) =>
             {
                 var result = MessageBox.Show(
@@ -137,11 +132,9 @@ namespace WarehouseEquipmentManager
             {
                 using (var context = new WarehouseDBEntities())
                 {
-                    // Удаляем связанные фотографии
                     var photos = context.EquipmentPhotos.Where(p => p.EquipmentId == equipmentId);
                     context.EquipmentPhotos.RemoveRange(photos);
 
-                    // Удаляем само оборудование
                     var equipment = context.Equipment.FirstOrDefault(e => e.Id == equipmentId);
                     if (equipment != null)
                     {

@@ -7,7 +7,6 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Label x:Name="lblEquipmentId" Content="ID в базе данных: " FontWeight="Bold" Margin="0,0,0,10"/>
-                <!-- Изображение оборудования -->
                 <Border BorderBrush="LightGray" BorderThickness="1" 
                         Width="270" Height="180" Margin="0,0,0,10"
                         HorizontalAlignment="Center">
@@ -15,7 +14,6 @@
                            Source="/Resources/no-image.png"/>
                 </Border>
 
-                <!-- Основные поля -->
                 <TextBlock Text="Название:" FontWeight="Bold" Margin="0,5,0,0"/>
                 <TextBox x:Name="txtName" Margin="0,0,0,5"/>
 
@@ -51,7 +49,6 @@
                          AcceptsReturn="True" TextWrapping="Wrap" Height="60" 
                          VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
 
-                <!-- Кнопки действий -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="btnCancel" Content="Отмена" Width="80" Margin="0,0,5,0"  Click="btnCancel_Click"/>
                     <Button x:Name="btnSave" Content="Сохранить" Width="80" Background="#FF3C2C62" Foreground="White"  Click="btnSave_Click"/>

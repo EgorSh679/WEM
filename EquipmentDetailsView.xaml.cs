@@ -30,7 +30,6 @@ namespace WarehouseEquipmentManager
 
         private void btnCancel_Click(object sender, RoutedEventArgs e) 
         {
-            // Восстанавливаем оригинальные значения
             txtName.Text = _originalValues.Name;
             txtSerialNumber.Text = _originalValues.SerialNumber;
             txtDescription.Text = _originalValues.Description;
@@ -44,8 +43,6 @@ namespace WarehouseEquipmentManager
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-
-            // Проверяем, есть ли изменения
             bool hasChanges =
                 txtName.Text != _originalValues.Name ||
                 txtSerialNumber.Text != _originalValues.SerialNumber ||
@@ -64,14 +61,13 @@ namespace WarehouseEquipmentManager
                 return;
             }
 
-            // Создаем объект для обновления
             var updatedEquipment = new EquipmentItem
             {
                 Id = _originalValues.Id,
                 Name = txtName.Text,
                 SerialNumber = txtSerialNumber.Text,
                 Description = txtDescription.Text,
-                PurchaseDate = dpPurchaseDate.SelectedDate ?? _originalValues.PurchaseDate, // Обработка null для DateTime
+                PurchaseDate = dpPurchaseDate.SelectedDate ?? _originalValues.PurchaseDate,
                 TypeId = cbType.SelectedValue != null ? Convert.ToInt32(cbType.SelectedValue) : _originalValues.TypeId,
                 StatusId = cbStatus.SelectedValue != null ? Convert.ToInt32(cbStatus.SelectedValue) : _originalValues.StatusId,
                 WarehouseId = cbWarehouse.SelectedValue != null ? Convert.ToInt32(cbWarehouse.SelectedValue) : _originalValues.WarehouseId,
@@ -82,12 +78,10 @@ namespace WarehouseEquipmentManager
             {
                 using (var context = new WarehouseDBEntities())
                 {
-                    // Находим запись в базе
                     var equipmentInDb = context.Equipment.FirstOrDefault(eq => eq.Id == _originalValues.Id);
 
                     if (equipmentInDb != null)
                     {
-                        // Обновляем поля
                         equipmentInDb.Name = updatedEquipment.Name;
                         equipmentInDb.SerialNumber = updatedEquipment.SerialNumber;
                         equipmentInDb.Description = updatedEquipment.Description;
@@ -97,12 +91,10 @@ namespace WarehouseEquipmentManager
                         equipmentInDb.WarehouseId = updatedEquipment.WarehouseId;
                         equipmentInDb.CreatedBy = updatedEquipment.CreatedBy;
 
-                        // Сохраняем изменения
                         context.SaveChanges();
 
                         MessageBox.Show("Изменения успешно сохранены!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // Обновляем оригинальные значения
                         _originalValues = updatedEquipment;
                     }
                     else

@@ -6,9 +6,8 @@
         xmlns:local="clr-namespace:WarehouseEquipmentManager"
         mc:Ignorable="d"
         WindowStyle="None" AllowsTransparency="True"
-        Width="400" Height="675" > 
+        Width="400" Height="675" >
     <Grid>
-        <!-- Кастомный заголовок -->
         <DockPanel LastChildFill="False" VerticalAlignment="Top" Background="#FF3C2C62" 
            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
             <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" 

@@ -71,17 +71,13 @@ namespace WarehouseEquipmentManager
 
         private void OnEquipmentSearchRequested(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
         {
-            // Очищаем панель с оборудованием
             EquipmentPanel.Children.Clear();
 
-            // Загружаем данные из БД
             List<EquipmentItem> equipmentList = LoadEquipmentFromDatabase(name, serial, typeId, statusId, date, warehouseId);
             //List<EquipmentItem> equipmentList = LoadEquipmentFromMemory(name, serial, typeId, statusId, date, warehouseId);
 
-            // Обновляем текст с количеством результатов
             ResultsCountText.Content = $"Найдено: {equipmentList.Count}";
 
-            // Создаем карточки для каждого оборудования
             foreach (var item in equipmentList)
             {
                 var card = CreateEquipmentCard(item);
@@ -100,7 +96,7 @@ namespace WarehouseEquipmentManager
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Программа 'Учет оборудования' была создана в результате производственной практики в МВД\n\n" +
-                           "Разработчик: Шатровой Е.С. и Назаров А.Р. и Рымарев Б.Г.\n" +
+                           "Разработчик: Шатровой Е.С. и Назаров А.Р.\n" +
                            "Версия: 1.0\n" +
                            "© 2025 Все права защищены",
                            "О программе");
@@ -122,10 +118,8 @@ namespace WarehouseEquipmentManager
         {
             using (var context = new WarehouseDBEntities())
             {
-                // Начинаем с базового запроса
                 var query = context.Equipment.AsQueryable();
 
-                // Применяем фильтры к Equipment до join
                 if (!string.IsNullOrEmpty(name))
                     query = query.Where(e => e.Name.Contains(name));
 
@@ -144,7 +138,6 @@ namespace WarehouseEquipmentManager
                 if (warehouseId.HasValue && warehouseId.Value > 0)
                     query = query.Where(e => e.WarehouseId == warehouseId.Value);
 
-                // Теперь выполняем join с фильтрами
                 var result = query
                     .Join(context.EquipmentTypes,
                         e => e.TypeId,
@@ -184,7 +177,6 @@ namespace WarehouseEquipmentManager
 
         /*private List<EquipmentItem> LoadEquipmentFromMemory(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
         {
-            // Создаем тестовые данные
             var equipmentList = new List<EquipmentItem>
             {
            new EquipmentItem {
@@ -202,7 +194,6 @@ namespace WarehouseEquipmentManager
                 Description = "Мощный ноутбук для разработки",
                 ImagePath = "laptop.jpg"
             },
-            // Остальные 9 элементов аналогично...
             new EquipmentItem { Id = 10, Name = "Рабочая станция", SerialNumber = "SN010",
                               TypeId = 0, TypeName = "Компьютер",
                               StatusId = 1, StatusName = "В наличии",
@@ -211,7 +202,6 @@ namespace WarehouseEquipmentManager
                               ImagePath = "workstation.jpg" }
             };
 
-            // Применяем фильтры
             var query = equipmentList.AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
@@ -250,7 +240,6 @@ namespace WarehouseEquipmentManager
 
             var stackPanel = new StackPanel();
 
-            // Изображение
             var image = new System.Windows.Controls.Image
             {
                 Height = 120,
@@ -265,11 +254,9 @@ namespace WarehouseEquipmentManager
             }
             else
             {
-                // Заглушка, если изображение отсутствует
                 image.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/image.png"));
             }
 
-            // Название
             var nameText = new TextBlock
             {
                 Text = equipment.Name,
@@ -278,7 +265,6 @@ namespace WarehouseEquipmentManager
                 TextWrapping = TextWrapping.Wrap
             };
 
-            // Серийный номер
             var serialText = new TextBlock
             {
                 Text = $"Серийный номер: {equipment.SerialNumber}",
@@ -304,27 +290,22 @@ namespace WarehouseEquipmentManager
         {
             var detailsView = new EquipmentDetailsView(equipment);
 
-            // Загружаем справочные данные для ComboBox
             LoadDetailsComboBoxes(detailsView, equipment);
 
-            // Устанавливаем данные оборудования как DataContext
             detailsView.DataContext = equipment;
 
-            // Показываем в правой панели (contentControl2)
             contentControl2.Content = detailsView;
         }
 
         private void LoadDetailsComboBoxes(EquipmentDetailsView detailsView, EquipmentItem equipment)
         {
-            using (var context = new WarehouseDBEntities()) // lblEquipmentId
+            using (var context = new WarehouseDBEntities())
             {
-                // Загружаем данные для ComboBox
                 detailsView.cbType.ItemsSource = context.EquipmentTypes.ToList();
                 detailsView.cbStatus.ItemsSource = context.EquipmentStatuses.ToList();
                 detailsView.cbWarehouse.ItemsSource = context.Warehouses.ToList();
                 detailsView.cbResponsible.ItemsSource = context.Users.ToList();
 
-                // Устанавливаем выбранные значения
                 detailsView.cbType.SelectedValue = equipment.TypeId;
                 detailsView.cbStatus.SelectedValue = equipment.StatusId;
                 detailsView.cbWarehouse.SelectedValue = equipment.WarehouseId;
@@ -335,7 +316,6 @@ namespace WarehouseEquipmentManager
                 detailsView.dpPurchaseDate.SelectedDate = equipment.PurchaseDate;
                 detailsView.txtDescription.Text = equipment.Description;
 
-                // Загружаем изображение
                 var photo = context.EquipmentPhotos.FirstOrDefault(p => p.EquipmentId == equipment.Id);
                 try
                 {
