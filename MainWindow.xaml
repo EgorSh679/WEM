@@ -22,25 +22,18 @@
                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
                 <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
                        FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
+                <Label x:Name="lbMaximize" Content="+" Foreground="#FFD9D8D8" MouseDown="ldMaximize_MouseDown" 
+                       FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
                 <Label Content="Warehouse Management System" Foreground="#FFD9D8D8" 
                        FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </DockPanel>
 
             <!-- Menu Bar -->
             <Menu Grid.Row="1" Background="#FFE6E6E6">
-                <MenuItem Header="Файл">
-                    <MenuItem Header="Новый" Command="{Binding CreateNewCommand}"/>
-                    <MenuItem Header="Сохранить" Command="{Binding SaveCommand}"/>
-                    <Separator/>
-                    <MenuItem Header="Выход" Command="{Binding ExitCommand}"/>
-                </MenuItem>
-                <MenuItem Header="Правка">
-                    <MenuItem Header="Редактировать" Command="{Binding EditCommand}"/>
-                    <MenuItem Header="Удалить" Command="{Binding DeleteCommand}"/>
-                </MenuItem>
-                <MenuItem Header="Справка">
-                    <MenuItem Header="О программе"/>
-                </MenuItem>
+                <MenuItem Header="Добавить оборудование" Click="AddNewEquipment_Click"/>
+                <MenuItem Header="Удалить оборудование" Click="DeleteEquipment_Click"/>
+                <MenuItem Header="Обновить данные" Click="UpdateEquipment_Click"/>
+                <MenuItem Header="О программе" Click="About_Click"/>
             </Menu>
 
             <!-- Main Content -->
@@ -64,7 +57,7 @@
                         <Button Content="Пользователи" Width="80" Margin="5" Click="UsersButton_Click"/>
                     </StackPanel>
 
-                    <ContentControl x:Name="contentControl" Grid.Row="1" Content="{Binding NavigationContent}"/>
+                    <ContentControl x:Name="contentControl" Grid.Row="1"/>
                 </Grid>
 
                 <!-- Block 2 - Search Results -->
@@ -74,35 +67,14 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Content="{Binding ResultsCountText}" FontWeight="Bold" Margin="5"/>
+                    <Label x:Name="ResultsCountText" Content="Найдено: 0" FontWeight="Bold" Margin="5"/>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding SearchResults}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="LightGray" BorderThickness="1" Margin="5" Padding="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <Image Source="{Binding Image}" Width="80" Height="80" Margin="5"/>
-
-                                            <StackPanel Grid.Column="1" Margin="5">
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding SerialNumber}"/>
-                                                <TextBlock Text="{Binding Status}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <WrapPanel x:Name="EquipmentPanel" Orientation="Horizontal"/>
                     </ScrollViewer>
                 </Grid>
 
                 <!-- Block 3 - Details -->
-                <ContentControl Grid.Column="2" Content="{Binding DetailsContent}" Margin="5"/>
+                <ContentControl x:Name="contentControl2" Grid.Column="2" Margin="5"/>
             </Grid>
         </Grid>
     </Border>

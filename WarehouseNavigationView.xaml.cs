@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WarehouseEquipmentManager.Classes;
+using WarehouseEquipmentManager.Entity;
 
 namespace WarehouseEquipmentManager
 {
@@ -30,52 +30,83 @@ namespace WarehouseEquipmentManager
 
         private void LoadWarehouses()
         {
-            // Мок-данные (замените на загрузку из БД)
-            var warehouses = new ObservableCollection<Warehouse>
-            {
-                new Warehouse
-                {
-                    Id = 1,
-                    Name = "Склад первого отделения",
-                    Address = "г. Новосибирск, ул. Ленина, 1",
-                    ResponsiblePerson = "Машуков А.Г."
-                },
-                new Warehouse
-                {
-                    Id = 2,
-                    Name = "Центральный склад",
-                    Address = "г. Новосибирск, пр. Карла Маркса, 10",
-                    ResponsiblePerson = null
-                }
-            };
-
-            // Очистка панели
+            // Очистка панели перед загрузкой новых данных
             WarehousesPanel.Children.Clear();
 
-            // Создание блоков для каждого склада
-            foreach (var warehouse in warehouses)
+            using (var context = new WarehouseDBEntities())
             {
-                var border = new Border
-                {
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
-                    Margin = new Thickness(0, 0, 0, 10),
-                    Padding = new Thickness(10),
-                    Background = Brushes.White
-                };
+                // Загрузка складов из базы данных
+                var warehouses = context.Warehouses
+                    .OrderBy(w => w.Name)
+                    .Select(w => new Warehouse
+                    {
+                        Id = w.Id,
+                        Name = w.Name,
+                        Address = w.Address,
+                        ResponsiblePerson = w.ResponsiblePerson
+                    })
+                    .ToList();
 
-                var textBlock = new TextBlock
+                // Создание блоков для каждого склада
+                foreach (var warehouse in warehouses)
                 {
-                    Text = $"ID: {warehouse.Id}\n" +
-                           $"Название: {warehouse.Name}\n" +
-                           $"Адрес: {warehouse.Address}\n" +
-                           $"Ответственный: {warehouse.ResponsiblePerson ?? "не назначен"}",
-                    TextWrapping = System.Windows.TextWrapping.Wrap
-                };
+                    var border = new Border
+                    {
+                        BorderBrush = Brushes.Gray,
+                        BorderThickness = new Thickness(1),
+                        Margin = new Thickness(0, 0, 0, 10),
+                        Padding = new Thickness(10),
+                        Background = Brushes.White,
+                        Cursor = Cursors.Hand // Добавляем курсор-указатель
+                    };
 
-                border.Child = textBlock;
-                WarehousesPanel.Children.Add(border);
+                    var textBlock = new TextBlock
+                    {
+                        Text = $"ID: {warehouse.Id}\n" +
+                               $"Название: {warehouse.Name}\n" +
+                               $"Адрес: {warehouse.Address}\n" +
+                               $"Ответственный: {warehouse.ResponsiblePerson ?? "не назначен"}",
+                        TextWrapping = TextWrapping.Wrap
+                    };
+
+                    // Добавляем обработчик клика
+                    /*border.MouseLeftButtonDown += (sender, e) =>
+                    {
+                        ShowWarehouseDetails(warehouse.Id);
+                    };*/ 
+
+                    border.Child = textBlock;
+                    WarehousesPanel.Children.Add(border);
+                }
             }
         }
+
+        // Дополнительный метод для показа деталей склада
+        /*private void ShowWarehouseDetails(int warehouseId)
+        {
+            using (var context = new WarehouseDBEntities())
+            {
+                var warehouse = context.Warehouses
+                    .FirstOrDefault(w => w.Id == warehouseId);
+
+                if (warehouse != null)
+                {
+                    // Здесь можно открыть детали склада в другом контроле
+                    MessageBox.Show($"Детали склада:\n\n" +
+                                  $"ID: {warehouse.Id}\n" +
+                                  $"Название: {warehouse.Name}\n" +
+                                  $"Адрес: {warehouse.Address}\n" +
+                                  $"Ответственный: {warehouse.ResponsiblePerson ?? "не назначен"}",
+                                  "Информация о складе");
+                }
+            }
+        }*/
+    }
+    public class Warehouse
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string ResponsiblePerson { get; set; }
     }
 }

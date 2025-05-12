@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WarehouseEquipmentManager.Classes;
+using WarehouseEquipmentManager.Entity;
 
 namespace WarehouseEquipmentManager
 {
@@ -29,60 +29,76 @@ namespace WarehouseEquipmentManager
         }
         private void LoadUsers()
         {
-            // Мок-данные (замените на загрузку из БД)
-            var users = new System.Collections.Generic.List<User>
-            {
-                new User
-                {
-                    Id = 1,
-                    Login = "Никола",
-                    Role = UserRole.Admin,
-                    FullName = "Николай Николаев Николаевич"
-                },
-                new User
-                {
-                    Id = 2,
-                    Login = "Иван123",
-                    Role = UserRole.Storekeeper,
-                    FullName = "Иванов Иван Иванович"
-                },
-                new User
-                {
-                    Id = 3,
-                    Login = "Гость",
-                    Role = UserRole.Viewer,
-                    FullName = "Петров Петр Петрович"
-                }
-            };
-
-            // Очистка панели
             UsersPanel.Children.Clear();
 
-            // Создание блоков для каждого пользователя
-            foreach (var user in users)
+            using (var context = new WarehouseDBEntities())
             {
-                var border = new Border
-                {
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
-                    Margin = new Thickness(0, 0, 0, 10),
-                    Padding = new Thickness(10),
-                    Background = Brushes.White
-                };
+                // Загрузка пользователей с JOIN к таблице ролей
+                var users = context.Users
+                    .Join(context.UserRoles,
+                          user => user.RoleId,
+                          role => role.Id,
+                          (user, role) => new User
+                          {
+                              Id = user.Id,
+                              Login = user.Login,
+                              Role = (UserRole)user.RoleId,
+                              RoleName = role.Name, // Добавляем название роли
+                              FullName = user.FullName,
+                              Email = user.Email
+                          })
+                    .OrderBy(u => u.FullName)
+                    .ToList();
 
-                var textBlock = new TextBlock
+                foreach (var user in users)
                 {
-                    Text = $"ID: {user.Id}\n" +
-                           $"Логин: {user.Login}\n" +
-                           $"Роль: {GetRoleName(user.Role)}\n" +
-                           $"Полное имя: {user.FullName}",
-                    TextWrapping = System.Windows.TextWrapping.Wrap
-                };
+                    var border = new Border
+                    {
+                        BorderBrush = Brushes.Gray,
+                        BorderThickness = new Thickness(1),
+                        Margin = new Thickness(0, 0, 0, 10),
+                        Padding = new Thickness(10),
+                        Background = Brushes.White,
+                        Cursor = Cursors.Hand
+                    };
 
-                border.Child = textBlock;
-                UsersPanel.Children.Add(border);
+                    var textBlock = new TextBlock
+                    {
+                        Text = $"ID: {user.Id}\n" +
+                               $"Логин: {user.Login}\n" +
+                               $"Роль: {user.RoleName}\n" + // Используем RoleName из JOIN
+                               $"Полное имя: {user.FullName}\n" +
+                               $"Email: {user.Email ?? "не указан"}",
+                        TextWrapping = TextWrapping.Wrap
+                    };
+
+                    border.Child = textBlock;
+                    UsersPanel.Children.Add(border);
+                }
             }
         }
+
+        // Enum для ролей пользователей
+        public enum UserRole
+        {
+            Admin = 1,
+            Storekeeper = 2,
+            Viewer = 3
+            // Добавьте другие роли при необходимости
+        }
+
+        // Класс User (должен быть объявлен в вашем проекте)
+        public class User
+        {
+            public int Id { get; set; }
+            public string Login { get; set; }
+            public UserRole Role { get; set; }
+            public string RoleName { get; set; } // Добавлено для хранения названия роли
+            public string FullName { get; set; }
+            public string Email { get; set; }
+        }
+
+        // Метод для получения названия роли
         private string GetRoleName(UserRole role)
         {
             switch (role)

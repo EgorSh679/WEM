@@ -16,7 +16,6 @@ namespace WarehouseEquipmentManager.Entity
     {
         public int Id { get; set; }
         public int EquipmentId { get; set; }
-        public string FileName { get; set; }
         public string FilePath { get; set; }
     
         public virtual Equipment Equipment { get; set; }

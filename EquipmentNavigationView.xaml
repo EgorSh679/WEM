@@ -5,43 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WarehouseEquipmentManager"
         mc:Ignorable="d" 
-        d:DesignHeight="450" d:DesignWidth="300">
+        d:DesignHeight="450" d:DesignWidth="300"
+        Loaded="UserControl_Loaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10">
             <!-- Поиск по названию -->
             <GroupBox Header="Название">
-                <TextBox Margin="5"/>
+                <TextBox x:Name="tbName" Margin="5"/>
             </GroupBox>
-
             <!-- Поиск по серийному номеру -->
             <GroupBox Header="Серийный номер">
-                <TextBox Margin="5"/>
+                <TextBox x:Name="tbSerialNumber" Margin="5"/>
             </GroupBox>
-
             <!-- Фильтр по типу -->
             <GroupBox Header="Тип оборудования">
-                <ComboBox Margin="5" IsSynchronizedWithCurrentItem="True"/>
+                <ComboBox x:Name="cbType" Margin="5" DisplayMemberPath="Name" SelectedValuePath="Id" IsSynchronizedWithCurrentItem="True"/>
             </GroupBox>
-
             <!-- Фильтр по статусу -->
             <GroupBox Header="Статус">
-                <ComboBox Margin="5"/>
+                <ComboBox x:Name="cbStatus" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="5"/>
             </GroupBox>
-
             <!-- Фильтр по дате -->
             <GroupBox Header="Дата поступления">
-                <DatePicker Margin="5"/>
+                <DatePicker x:Name="dpData" Margin="5"/>
             </GroupBox>
-
             <!-- Фильтр по складу -->
             <GroupBox Header="Склад">
-                <ComboBox Margin="5"/>
+                <ComboBox x:Name="cbWarehouse" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="5"/>
             </GroupBox>
-
             <!-- Кнопки -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Сброс" Margin="5" Width="80"/>
-                <Button Content="Поиск" Margin="5" Width="80"/>
+                <Button Content="Сброс" Margin="5" Width="80" Click="btnReset_Click"/>
+                <Button Content="Поиск" Margin="5" Width="80" Click="btnSearch_Click"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

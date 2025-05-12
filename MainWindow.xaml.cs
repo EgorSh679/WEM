@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WarehouseEquipmentManager.Entity;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WarehouseEquipmentManager
 {
@@ -20,10 +23,12 @@ namespace WarehouseEquipmentManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly string ProjectRoot = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
         public MainWindow()
         {
             InitializeComponent();
             ShowEquipmentView(0);
+            OnEquipmentSearchRequested(null, null, null, null, null, null);
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -33,7 +38,11 @@ namespace WarehouseEquipmentManager
                 DragMove();
             }
         }
-
+        // ldMaximize_MouseDown
+        private void ldMaximize_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
         private void ldExit_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Close();
@@ -47,7 +56,9 @@ namespace WarehouseEquipmentManager
             switch (key)
             {
                 case 0:
-                    contentControl.Content = new EquipmentNavigationView();
+                    var navigationView = new EquipmentNavigationView();
+                    navigationView.SearchRequested += OnEquipmentSearchRequested;
+                    contentControl.Content = navigationView;
                     break;
                 case 1:
                     contentControl.Content = new WarehouseNavigationView();
@@ -55,6 +66,288 @@ namespace WarehouseEquipmentManager
                 case 2:
                     contentControl.Content = new UserNavigationView();
                     break;
+            }
+        } 
+
+        private void OnEquipmentSearchRequested(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
+        {
+            // Очищаем панель с оборудованием
+            EquipmentPanel.Children.Clear();
+
+            // Загружаем данные из БД
+            List<EquipmentItem> equipmentList = LoadEquipmentFromDatabase(name, serial, typeId, statusId, date, warehouseId);
+            //List<EquipmentItem> equipmentList = LoadEquipmentFromMemory(name, serial, typeId, statusId, date, warehouseId);
+
+            // Обновляем текст с количеством результатов
+            ResultsCountText.Content = $"Найдено: {equipmentList.Count}";
+
+            // Создаем карточки для каждого оборудования
+            foreach (var item in equipmentList)
+            {
+                var card = CreateEquipmentCard(item);
+                EquipmentPanel.Children.Add(card);
+            }
+        }
+
+        private void AddNewEquipment_Click(object sender, RoutedEventArgs e)
+        {
+            var addWindow = new AddEquipmentWindow();
+            addWindow.Owner = this;
+            addWindow.ShowDialog();
+            OnEquipmentSearchRequested(null, null, null, null, null, null);
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Программа 'Учет оборудования' была создана в результате производственной практики в МВД\n\n" +
+                           "Разработчик: Шатровой Е.С. и Назаров А.Р. и Рымарев Б.Г.\n" +
+                           "Версия: 1.0\n" +
+                           "© 2025 Все права защищены",
+                           "О программе");
+        }
+        private void DeleteEquipment_Click(object sender, RoutedEventArgs e)
+        {
+            var addWindow = new DeleteEquipmentWindow();
+            addWindow.Owner = this;
+            addWindow.ShowDialog();
+            OnEquipmentSearchRequested(null, null, null, null, null, null);
+        }
+
+        private void UpdateEquipment_Click(object sender, RoutedEventArgs e)
+        {
+            OnEquipmentSearchRequested(null, null, null, null, null, null);
+        }
+
+        private List<EquipmentItem> LoadEquipmentFromDatabase(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
+        {
+            using (var context = new WarehouseDBEntities())
+            {
+                // Начинаем с базового запроса
+                var query = context.Equipment.AsQueryable();
+
+                // Применяем фильтры к Equipment до join
+                if (!string.IsNullOrEmpty(name))
+                    query = query.Where(e => e.Name.Contains(name));
+
+                if (!string.IsNullOrEmpty(serial))
+                    query = query.Where(e => e.SerialNumber.Contains(serial));
+
+                if (typeId.HasValue && typeId.Value > 0)
+                    query = query.Where(e => e.TypeId == typeId.Value);
+
+                if (statusId.HasValue && statusId.Value > 0)
+                    query = query.Where(e => e.StatusId == statusId.Value);
+
+                if (date.HasValue)
+                    query = query.Where(e => e.PurchaseDate == date.Value);
+
+                if (warehouseId.HasValue && warehouseId.Value > 0)
+                    query = query.Where(e => e.WarehouseId == warehouseId.Value);
+
+                // Теперь выполняем join с фильтрами
+                var result = query
+                    .Join(context.EquipmentTypes,
+                        e => e.TypeId,
+                        t => t.Id,
+                        (e, t) => new { e, TypeName = t.Name })
+                    .Join(context.EquipmentStatuses,
+                        temp => temp.e.StatusId,
+                        s => s.Id,
+                        (temp, s) => new { temp.e, temp.TypeName, StatusName = s.Name })
+                    .Join(context.Warehouses,
+                        temp => temp.e.WarehouseId,
+                        w => w.Id,
+                        (temp, w) => new EquipmentItem
+                        {
+                            Id = temp.e.Id,
+                            Name = temp.e.Name,
+                            SerialNumber = temp.e.SerialNumber,
+                            TypeId = temp.e.TypeId,
+                            TypeName = temp.TypeName,
+                            StatusId = temp.e.StatusId,
+                            StatusName = temp.StatusName,
+                            PurchaseDate = temp.e.PurchaseDate,
+                            WarehouseId = temp.e.WarehouseId,
+                            WarehouseName = w.Name,
+                            CreatedBy = temp.e.CreatedBy,
+                            Description = temp.e.Description,
+                            ImagePath = context.EquipmentPhotos
+                                .Where(p => p.EquipmentId == temp.e.Id)
+                                .Select(p => p.FilePath)
+                                .FirstOrDefault()
+                        })
+                    .ToList();
+
+                return result;
+            }
+        }
+
+        /*private List<EquipmentItem> LoadEquipmentFromMemory(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
+        {
+            // Создаем тестовые данные
+            var equipmentList = new List<EquipmentItem>
+            {
+           new EquipmentItem {
+                Id = 1,
+                Name = "Ноутбук Dell",
+                SerialNumber = "SN001",
+                TypeId = 1,
+                TypeName = "Ноутбук",
+                StatusId = 1,
+                StatusName = "В наличии",
+                PurchaseDate = new DateTime(2025, 5, 9),
+                WarehouseId = 1,
+                WarehouseName = "Основной склад",
+                CreatedBy = 1, // ID ответственного
+                Description = "Мощный ноутбук для разработки",
+                ImagePath = "laptop.jpg"
+            },
+            // Остальные 9 элементов аналогично...
+            new EquipmentItem { Id = 10, Name = "Рабочая станция", SerialNumber = "SN010",
+                              TypeId = 0, TypeName = "Компьютер",
+                              StatusId = 1, StatusName = "В наличии",
+                              PurchaseDate = new DateTime(2025, 5, 10),
+                              WarehouseId = 3, WarehouseName = "Серверная",
+                              ImagePath = "workstation.jpg" }
+            };
+
+            // Применяем фильтры
+            var query = equipmentList.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(e => e.Name.Contains(name));
+
+            if (!string.IsNullOrEmpty(serial))
+                query = query.Where(e => e.SerialNumber.Contains(serial));
+
+            if (typeId.HasValue && typeId.Value > 0)
+                query = query.Where(e => e.TypeId == typeId.Value);
+
+            if (statusId.HasValue && statusId.Value > 0)
+                query = query.Where(e => e.StatusId == statusId.Value);
+
+            if (date.HasValue)
+                query = query.Where(e => e.PurchaseDate.Date == date.Value.Date);
+
+            if (warehouseId.HasValue && warehouseId.Value > 0)
+                query = query.Where(e => e.WarehouseId == warehouseId.Value);
+
+            return query.ToList();
+        }*/
+
+        private FrameworkElement CreateEquipmentCard(dynamic equipment)
+        {
+            var border = new Border
+            {
+                Width = 200,
+                Height = 200,
+                Margin = new Thickness(10),
+                BorderBrush = Brushes.LightGray,
+                BorderThickness = new Thickness(1),
+                Background = Brushes.White,
+                CornerRadius = new CornerRadius(5)
+            };
+
+            var stackPanel = new StackPanel();
+
+            // Изображение
+            var image = new System.Windows.Controls.Image
+            {
+                Height = 120,
+                Stretch = Stretch.Uniform,
+                Margin = new Thickness(10) 
+            };
+
+            if (!string.IsNullOrEmpty(equipment.ImagePath))
+            {
+                try { image.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/{equipment.ImagePath}")); }
+                catch { image.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/image.png")); }
+            }
+            else
+            {
+                // Заглушка, если изображение отсутствует
+                image.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/image.png"));
+            }
+
+            // Название
+            var nameText = new TextBlock
+            {
+                Text = equipment.Name,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10, 0, 10, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            // Серийный номер
+            var serialText = new TextBlock
+            {
+                Text = $"Серийный номер: {equipment.SerialNumber}",
+                Margin = new Thickness(10, 0, 10, 5),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            stackPanel.Children.Add(image);
+            stackPanel.Children.Add(nameText);
+            stackPanel.Children.Add(serialText);
+             
+            border.Child = stackPanel;
+
+            border.MouseLeftButtonDown += (sender, e) =>
+            {
+                OpenEquipmentDetails(equipment);
+            };
+
+            return border;
+        }
+
+        private void OpenEquipmentDetails(EquipmentItem equipment)
+        {
+            var detailsView = new EquipmentDetailsView(equipment);
+
+            // Загружаем справочные данные для ComboBox
+            LoadDetailsComboBoxes(detailsView, equipment);
+
+            // Устанавливаем данные оборудования как DataContext
+            detailsView.DataContext = equipment;
+
+            // Показываем в правой панели (contentControl2)
+            contentControl2.Content = detailsView;
+        }
+
+        private void LoadDetailsComboBoxes(EquipmentDetailsView detailsView, EquipmentItem equipment)
+        {
+            using (var context = new WarehouseDBEntities()) // lblEquipmentId
+            {
+                // Загружаем данные для ComboBox
+                detailsView.cbType.ItemsSource = context.EquipmentTypes.ToList();
+                detailsView.cbStatus.ItemsSource = context.EquipmentStatuses.ToList();
+                detailsView.cbWarehouse.ItemsSource = context.Warehouses.ToList();
+                detailsView.cbResponsible.ItemsSource = context.Users.ToList();
+
+                // Устанавливаем выбранные значения
+                detailsView.cbType.SelectedValue = equipment.TypeId;
+                detailsView.cbStatus.SelectedValue = equipment.StatusId;
+                detailsView.cbWarehouse.SelectedValue = equipment.WarehouseId;
+                detailsView.cbResponsible.SelectedValue = equipment.CreatedBy;
+                detailsView.lblEquipmentId.Content = $"ID в базе данных: {equipment.Id}";
+                detailsView.txtName.Text = equipment.Name;
+                detailsView.txtSerialNumber.Text = equipment.SerialNumber;
+                detailsView.dpPurchaseDate.SelectedDate = equipment.PurchaseDate;
+                detailsView.txtDescription.Text = equipment.Description;
+
+                // Загружаем изображение
+                var photo = context.EquipmentPhotos.FirstOrDefault(p => p.EquipmentId == equipment.Id);
+                try
+                {
+                    if (photo != null)
+                    {
+                        detailsView.imgEquipment.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/{equipment.ImagePath}"));
+                    }
+                }
+                catch
+                {
+                    detailsView.imgEquipment.Source = new BitmapImage(new Uri($"{ProjectRoot}/WEM/images/image.png"));
+                }
             }
         }
     }

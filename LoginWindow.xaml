@@ -16,7 +16,7 @@
             </Grid.RowDefinitions>
 
             <!-- Title Bar -->
-            <DockPanel LastChildFill="False" VerticalAlignment="Top" Background="#FF3C2C62" 
+            <DockPanel VerticalAlignment="Top" Background="#FF3C2C62" 
                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
                 <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
                        FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
@@ -27,22 +27,12 @@
             <!-- Login Form -->
             <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
                 <Label Content="Логин:" Margin="0,5"/>
-                <TextBox x:Name="txtLogin" Height="25" Margin="0,0,0,10"/>
+                <TextBox x:Name="txtLogin" Margin="0,0,0,10"/>
 
                 <Label Content="Пароль:" Margin="0,5"/>
-                <PasswordBox x:Name="txtPassword" Height="25" Margin="0,0,0,10"/>
+                <PasswordBox x:Name="txtPassword" Margin="0,0,0,10"/>
 
-                <Label Content="ФИО:" Margin="0,5"/>
-                <TextBox x:Name="txtFullName" Height="25" Margin="0,0,0,10"/>
-
-                <Label Content="Должность:" Margin="0,5"/>
-                <ComboBox x:Name="cmbPosition" Height="25" Margin="0,0,0,20">
-                    <ComboBoxItem Content="Администратор"/>
-                    <ComboBoxItem Content="Кладовщик"/>
-                    <ComboBoxItem Content="Гость"/>
-                </ComboBox>
-
-                <Button Content="Войти" Height="30" Click="LoginButton_Click"/>
+                <Button Content="Войти" Height="30" Margin="0,0,0,10" Click="LoginButton_Click"/>
             </StackPanel>
         </Grid>
     </Border>
