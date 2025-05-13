@@ -1,23 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using WarehouseEquipmentManager.Entity;
 
 namespace WarehouseEquipmentManager
 {
-    /// <summary>
-    /// Логика взаимодействия для DeleteEquipmentWindow.xaml
-    /// </summary>
     public partial class DeleteEquipmentWindow : Window
     {
         public DeleteEquipmentWindow()
@@ -25,21 +15,17 @@ namespace WarehouseEquipmentManager
             InitializeComponent();
             LoadEquipment();
         }
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
+                DragMove();
         }
 
-        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            this.Close();
-        }
+        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e) => Close();
+
         private void LoadEquipment()
         {
             try

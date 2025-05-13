@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WarehouseEquipmentManager.Entity;
 using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WarehouseEquipmentManager
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static readonly string ProjectRoot = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,23 +25,18 @@ namespace WarehouseEquipmentManager
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
-            {
                 DragMove();
-            }
         }
-        // ldMaximize_MouseDown
+
+        private void ldMinimize_MouseDown(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
         private void ldMaximize_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-        }
-        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Close();
-        }
+            => WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e) => Close();
 
         private void EquipmentButton_Click(object sender, RoutedEventArgs e) => ShowEquipmentView(0);
         private void WarehousesButton_Click(object sender, RoutedEventArgs e) => ShowEquipmentView(1);
         private void UsersButton_Click(object sender, RoutedEventArgs e) => ShowEquipmentView(2);
+
         private void ShowEquipmentView(int key)
         {
             switch (key)
@@ -74,8 +60,7 @@ namespace WarehouseEquipmentManager
             EquipmentPanel.Children.Clear();
 
             List<EquipmentItem> equipmentList = LoadEquipmentFromDatabase(name, serial, typeId, statusId, date, warehouseId);
-            //List<EquipmentItem> equipmentList = LoadEquipmentFromMemory(name, serial, typeId, statusId, date, warehouseId);
-
+ 
             ResultsCountText.Content = $"Найдено: {equipmentList.Count}";
 
             foreach (var item in equipmentList)
@@ -101,6 +86,7 @@ namespace WarehouseEquipmentManager
                            "© 2025 Все права защищены",
                            "О программе");
         }
+
         private void DeleteEquipment_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new DeleteEquipmentWindow();
@@ -110,9 +96,7 @@ namespace WarehouseEquipmentManager
         }
 
         private void UpdateEquipment_Click(object sender, RoutedEventArgs e)
-        {
-            OnEquipmentSearchRequested(null, null, null, null, null, null);
-        }
+            => OnEquipmentSearchRequested(null, null, null, null, null, null);
 
         private List<EquipmentItem> LoadEquipmentFromDatabase(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
         {
@@ -174,56 +158,6 @@ namespace WarehouseEquipmentManager
                 return result;
             }
         }
-
-        /*private List<EquipmentItem> LoadEquipmentFromMemory(string name, string serial, int? typeId, int? statusId, DateTime? date, int? warehouseId)
-        {
-            var equipmentList = new List<EquipmentItem>
-            {
-           new EquipmentItem {
-                Id = 1,
-                Name = "Ноутбук Dell",
-                SerialNumber = "SN001",
-                TypeId = 1,
-                TypeName = "Ноутбук",
-                StatusId = 1,
-                StatusName = "В наличии",
-                PurchaseDate = new DateTime(2025, 5, 9),
-                WarehouseId = 1,
-                WarehouseName = "Основной склад",
-                CreatedBy = 1, // ID ответственного
-                Description = "Мощный ноутбук для разработки",
-                ImagePath = "laptop.jpg"
-            },
-            new EquipmentItem { Id = 10, Name = "Рабочая станция", SerialNumber = "SN010",
-                              TypeId = 0, TypeName = "Компьютер",
-                              StatusId = 1, StatusName = "В наличии",
-                              PurchaseDate = new DateTime(2025, 5, 10),
-                              WarehouseId = 3, WarehouseName = "Серверная",
-                              ImagePath = "workstation.jpg" }
-            };
-
-            var query = equipmentList.AsQueryable();
-
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(e => e.Name.Contains(name));
-
-            if (!string.IsNullOrEmpty(serial))
-                query = query.Where(e => e.SerialNumber.Contains(serial));
-
-            if (typeId.HasValue && typeId.Value > 0)
-                query = query.Where(e => e.TypeId == typeId.Value);
-
-            if (statusId.HasValue && statusId.Value > 0)
-                query = query.Where(e => e.StatusId == statusId.Value);
-
-            if (date.HasValue)
-                query = query.Where(e => e.PurchaseDate.Date == date.Value.Date);
-
-            if (warehouseId.HasValue && warehouseId.Value > 0)
-                query = query.Where(e => e.WarehouseId == warehouseId.Value);
-
-            return query.ToList();
-        }*/
 
         private FrameworkElement CreateEquipmentCard(dynamic equipment)
         {

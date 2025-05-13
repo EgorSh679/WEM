@@ -19,8 +19,11 @@
                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Height="35">
                 <Label x:Name="lbExit" Content="X" Foreground="#FFD9D8D8" MouseDown="ldExit_MouseDown" 
                        FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
+                <Label x:Name="lbMinimize" Content="-" Foreground="#FFD9D8D8" MouseDown="ldMinimize_MouseDown" 
+                       FontWeight="Bold" FontSize="20" DockPanel.Dock="Right" Width="37" HorizontalContentAlignment="Center"/>
                 <Label Content="Авторизация" Foreground="#FFD9D8D8" 
                        FontWeight="Bold" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                
             </DockPanel>
 
             <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">

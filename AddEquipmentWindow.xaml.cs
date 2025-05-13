@@ -1,31 +1,19 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using WarehouseEquipmentManager.Entity;
 using System.IO;
 
 namespace WarehouseEquipmentManager
 {
-    /// <summary>
-    /// Логика взаимодействия для AddEquipmentWindow.xaml
-    /// </summary>
     public partial class AddEquipmentWindow : Window
     {
         private string _imagePath;
         private const string DefaultImagePath = "pack://application:,,,/images/image.png";
+
         public AddEquipmentWindow()
         {
             InitializeComponent();
@@ -118,7 +106,7 @@ namespace WarehouseEquipmentManager
                     context.SaveChanges();
 
                     MessageBox.Show("Оборудование успешно добавлено!");
-                    this.Close();
+                    Close();
                 }
             }
             catch (Exception ex)
@@ -127,22 +115,17 @@ namespace WarehouseEquipmentManager
             }
         }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e) => Close();
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
-        }
-
-        private void ldExit_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            this.Close();
+                DragMove();
         }
     }
+
     public partial class EquipmentPhoto
     {
         public int Id { get; set; }
