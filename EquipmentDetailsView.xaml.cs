@@ -53,8 +53,6 @@ namespace WarehouseEquipmentManager
                 (int?)cbWarehouse.SelectedValue != _originalValues.WarehouseId ||
                 (int?)cbResponsible.SelectedValue != _originalValues.CreatedBy;
 
-            MessageBox.Show($"{txtDescription.Text} != {_originalValues.Description}");
-
             if (!hasChanges)
             {
                 MessageBox.Show("Изменений не обнаружено.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
