@@ -9,11 +9,42 @@ namespace WarehouseEquipmentManager
     public partial class EquipmentDetailsView : UserControl
     {
         private EquipmentItem  _originalValues;
+        private readonly int _equipmentId;
+
 
         public EquipmentDetailsView(EquipmentItem equipment)
         {
             InitializeComponent();
             _originalValues = equipment;
+            _equipmentId = equipment.Id;
+            LoadEquipmentHistory();
+        }
+
+        private void LoadEquipmentHistory()
+        {
+            using (var context = new WarehouseDBEntities())
+            {
+                var history = context.AuditLogs
+                    .Where(log => log.TableName == "Equipment" && log.RecordId == _equipmentId)
+                    .OrderByDescending(log => log.ChangeDate)
+                    .Select(log => new AuditLogViewModel
+                    {
+                        ChangeDate = log.ChangeDate ?? DateTime.Now,
+                        ActionType = log.ActionType == "I" ? "Создание" : 
+                                    log.ActionType == "U" ? "Изменение" : "Удаление",
+                        OldData = log.OldData,
+                    })
+                    .ToList();
+                dgAuditLogs.ItemsSource = history;
+            }
+        }
+
+        // Класс для отображения истории
+        private class AuditLogViewModel
+        {
+            public DateTime ChangeDate { get; set; }
+            public string ActionType { get; set; }
+            public string OldData { get; set; }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e) 
